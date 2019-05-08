@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: ''
+
+Resources:
+  HmazterDevRedirect:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: 'hmazter-dev-redirect'
+      Description: 'Redirect traffic on hmazter.dev'
+      CodeUri: .
+      Handler: index.php
+      Timeout: 30 # in seconds (API Gateway has a timeout of 30 seconds)
+      MemorySize: 512 # The memory size is related to the pricing and CPU power
+      Runtime: provided
+      Layers:
+        - 'arn:aws:lambda:eu-north-1:209497400698:layer:php-73-fpm:5'
+      Events:
+        # The function will match all HTTP URLs
+        HttpRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+        HttpSubPaths:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
